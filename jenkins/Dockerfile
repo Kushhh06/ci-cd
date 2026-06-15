@@ -9,8 +9,10 @@ RUN apt-get update && apt-get install -y \
     git \
   && rm -rf /var/lib/apt/lists/*
 
-# Match the host docker group GID so jenkins can access /var/run/docker.sock
-RUN groupadd -f -g 124 docker && usermod -aG docker jenkins
+# Match host docker GID (124) so jenkins can access /var/run/docker.sock.
+# groupmod changes the existing group's GID; groupadd handles the case it doesn't exist yet.
+RUN if getent group docker; then groupmod -g 124 docker; else groupadd -g 124 docker; fi \
+ && usermod -aG docker jenkins
 
 USER jenkins
 
