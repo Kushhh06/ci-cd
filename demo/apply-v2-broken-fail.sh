@@ -1,24 +1,26 @@
 #!/usr/bin/env bash
-# Demo Update v2 — introduces a syntax error in the backend.
-# Pipeline will: Build ✅ Test ❌ (fails here) Deploy skipped.
-# App continues serving traffic on the previous colour. Zero downtime.
+# Demo v2 — intentional syntax error in backend.
+# Pipeline: Build ✅  Test ❌  Deploy SKIPPED
+# Live app stays running — zero downtime proven.
 set -e
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SERVER="$ROOT/app/backend/src/server.js"
 
-echo "Applying v2: broken backend (syntax error)..."
+echo "Applying v2: injecting syntax error into server.js..."
 
-# Append a deliberate syntax error at the end of server.js
-cat >> "$SERVER" << 'EOF'
+# Append an unclosed object literal — valid JS up to the brace, then syntax error
+cat >> "$ROOT/app/backend/src/server.js" << 'EOF'
 
-// BUG: accidental syntax error introduced in this commit
-const brokenCode = {
+// BUG: accidental syntax error — unclosed object
+const brokenAnalytics = {
 EOF
 
-echo "Done. Now commit and watch the pipeline fail:"
 echo ""
-echo "  git add -A && git commit -m 'feat: add analytics (WIP — DO NOT MERGE)'"
+echo "✅ v2 patch applied. Committing..."
+cd "$ROOT"
+git add app/backend/src/server.js
+git commit -m "feat: add analytics (WIP — syntax error)"
 echo ""
-echo "Jenkins: Build ✅ → Test ❌ → Deploy skipped"
-echo "Your live app remains UNTOUCHED on the previous deployment."
+echo "Jenkins will detect the commit within 60s and run:"
+echo "  Build ✅ → Test ❌ (syntax error) → Deploy SKIPPED"
+echo "Your live app at http://localhost keeps serving traffic — zero downtime!"
