@@ -14,12 +14,12 @@
   --text-subtle:  #484f58;
   --accent:       #388bfd;
   --accent-hover: #58a6ff;
-  --accent-glow:  rgba(56, 139, 253, 0.15);
+  --accent-glow:  rgba(139, 92, 246, 0.15);
   --green:        #3fb950;
   --green-dim:    rgba(63,185,80,.15);
   --green-border: rgba(63,185,80,.3);
-  --blue-dim:     rgba(56,139,253,.12);
-  --blue-border:  rgba(56,139,253,.3);
+  --blue-dim:     rgba(139,92,246,.12);
+  --blue-border:  rgba(139,92,246,.3);
   --red:          #f85149;
   --purple:       #bc8cff;
   --purple-glow:  rgba(188,140,255,.2);
@@ -60,10 +60,10 @@ header {
 .brand-icon {
   width: 34px; height: 34px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #1f6feb, #388bfd);
+  background: linear-gradient(135deg, #6d28d9, #8b5cf6);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 0 12px rgba(56,139,253,.35);
+  box-shadow: 0 0 12px rgba(139,92,246,.35);
 }
 .brand-icon svg { color: #fff; }
 .brand-name {
