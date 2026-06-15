@@ -129,7 +129,3 @@ app._resetForTest = () => {
   try { fs.unlinkSync(DATA_FILE); } catch {}
 };
 
-module.exports = app;
-
-// BUG: accidental syntax error — unclosed object
-const brokenAnalytics = {
