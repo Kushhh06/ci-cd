@@ -31,7 +31,7 @@ jobs:
                 remote {
                   url('file:///repo')
                 }
-                branches('*/main')
+                branches('*/master')
               }
             }
             scriptPath('Jenkinsfile')

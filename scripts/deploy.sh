@@ -91,8 +91,8 @@ fi
 echo "[3/4] Switching nginx traffic to ${NEW_COLOR}..."
 
 UPSTREAM_CONF="# Managed by deploy.sh — do not edit manually.
-upstream backend  { server ${APP_NAME}-backend-${NEW_COLOR}:3000; }
-upstream frontend { server ${APP_NAME}-frontend-${NEW_COLOR}:80;  }"
+set \$backend_upstream  \"${APP_NAME}-backend-${NEW_COLOR}:3000\";
+set \$frontend_upstream \"${APP_NAME}-frontend-${NEW_COLOR}:80\";"
 
 echo "$UPSTREAM_CONF" | docker exec -i "$NGINX_CONTAINER" \
   sh -c 'cat > /etc/nginx/conf.d/upstream.conf'
