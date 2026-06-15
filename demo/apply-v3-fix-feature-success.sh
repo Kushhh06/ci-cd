@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
-# Demo v3 — fix the syntax error from v2, no new features needed
-# (summarise + AI chat already exist in the current design).
+# Demo v3 — fix the syntax error from v2.
 # Pipeline: Build ✅  Test ✅  Deploy ✅
 set -e
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SERVER="$ROOT/app/backend/src/server.js"
+
+# Only removes lines if the v2 marker is actually present — safe to run anytime
+if ! grep -q '// __DEMO_BREAK__' "$SERVER"; then
+  echo "v2 marker not found — nothing to fix. Run v2 first."
+  exit 0
+fi
 
 echo "Applying v3: removing syntax error from server.js..."
 
-# Strip the broken lines appended by v2 (last 3 lines)
-# Works on both GNU and BSD sed
-SERVER="$ROOT/app/backend/src/server.js"
-LINES=$(wc -l < "$SERVER")
-KEEP=$((LINES - 3))   # remove blank line + BUG comment + unclosed object (3 lines)
-head -n "$KEEP" "$SERVER" > "${SERVER}.tmp" && mv "${SERVER}.tmp" "$SERVER"
+# Delete from the marker line to end of file (GNU + BSD sed compatible)
+sed -i '/\/\/ __DEMO_BREAK__/,$d' "$SERVER"
 
 echo ""
 echo "✅ v3 patch applied. Committing..."

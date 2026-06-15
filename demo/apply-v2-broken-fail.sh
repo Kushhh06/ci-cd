@@ -5,13 +5,19 @@
 set -e
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SERVER="$ROOT/app/backend/src/server.js"
+
+# Idempotent — skip if marker already present
+if grep -q '// __DEMO_BREAK__' "$SERVER"; then
+  echo "v2 already applied. Run v3 first to restore."
+  exit 0
+fi
 
 echo "Applying v2: injecting syntax error into server.js..."
 
-# Append an unclosed object literal — valid JS up to the brace, then syntax error
-cat >> "$ROOT/app/backend/src/server.js" << 'EOF'
+cat >> "$SERVER" << 'EOF'
 
-// BUG: accidental syntax error — unclosed object
+// __DEMO_BREAK__ — marker used by v3 to cleanly remove this block
 const brokenAnalytics = {
 EOF
 
