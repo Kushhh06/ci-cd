@@ -116,17 +116,17 @@ app.post('/api/summarise', async (req, res) => {
   }
 });
 
-// Test-only helper — never exposed via HTTP
-exports._resetForTest = () => {
-  notes.length = 0;
-  nextId = 1;
-  try { fs.unlinkSync(DATA_FILE); } catch {}
-};
-
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`[${process.env.APP_COLOR || 'blue'}] AI Notes v${process.env.APP_VERSION || '1.0.0'} on :${PORT}`);
   });
 }
+
+// Test-only helper — attached to app so it survives module.exports = app
+app._resetForTest = () => {
+  notes.length = 0;
+  nextId = 1;
+  try { fs.unlinkSync(DATA_FILE); } catch {}
+};
 
 module.exports = app;

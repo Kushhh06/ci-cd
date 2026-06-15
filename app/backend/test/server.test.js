@@ -2,7 +2,7 @@ process.env.DATA_DIR = '/tmp/ai-notes-test-' + process.pid;
 
 const request = require('supertest');
 const app = require('../src/server');
-const { _resetForTest } = require('../src/server');
+const { _resetForTest } = app;
 
 beforeEach(() => _resetForTest());
 
