@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Notes</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">📝</span>
+        <h1>AI Notes</h1>
+      </div>
+      <div id="deploy-badge" class="deploy-badge">connecting…</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+
+      <!-- Add Note -->
+      <section class="card" id="add-note-card">
+        <h2>New Note</h2>
+        <form id="note-form">
+          <input id="note-title" type="text" placeholder="Title…" required />
+          <textarea id="note-content" placeholder="Write your note…" required></textarea>
+          <button type="submit">Add Note</button>
+        </form>
+      </section>
+
+      <!-- Notes List -->
+      <section class="card" id="notes-card">
+        <h2>Your Notes <span id="note-count" class="count"></span></h2>
+        <div id="notes-list">
+          <p class="empty">No notes yet — add one on the left!</p>
+        </div>
+      </section>
+
+      <!-- AI Chat -->
+      <section class="card" id="chat-card">
+        <h2>🤖 Ask AI about your notes</h2>
+        <div id="chat-box"></div>
+        <form id="chat-form">
+          <input id="chat-input" type="text" placeholder="Ask something…" autocomplete="off" />
+          <button type="submit">Send</button>
+        </form>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

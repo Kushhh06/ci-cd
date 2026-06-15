@@ -1,0 +1,52 @@
+# ============================================================
+# CI/CD Project — Full Requirements
+# ============================================================
+# This file documents ALL dependencies across every layer.
+# Node.js packages live in app/backend/package.json.
+# Everything else listed here runs inside Docker containers.
+# ============================================================
+
+
+# ── System (install on your machine) ────────────────────────
+# docker>=24.0.0
+# docker-compose>=2.0.0        (docker compose plugin, not docker-compose v1)
+# git>=2.30.0
+
+
+# ── External Credentials ────────────────────────────────────
+# GEMINI_API_KEY                (get free key at aistudio.google.com/app/apikey)
+
+
+# ── Node.js Backend  (app/backend/package.json) ─────────────
+# Runtime dependencies:
+express==4.18.2
+cors==2.8.5
+@google/generative-ai==0.21.0
+
+# Dev / Test dependencies:
+jest==29.7.0
+supertest==6.3.4
+
+
+# ── Docker Base Images  (pulled automatically) ───────────────
+# node:20-alpine                backend build
+# nginx:1.25-alpine             frontend container + reverse proxy
+# jenkins/jenkins:lts-jdk17     CI/CD server
+# curlimages/curl:latest        in-network health checks
+
+
+# ── Jenkins Plugins  (jenkins/plugins.txt) ──────────────────
+# git
+# workflow-aggregator
+# pipeline-stage-view
+# credentials-binding
+# credentials
+# plain-credentials
+# docker-workflow
+# blueocean
+# job-dsl
+# configuration-as-code
+
+
+# ── Environment Variables  (copy .env.example → .env) ────────
+# GEMINI_API_KEY=<your_key>

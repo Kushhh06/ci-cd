@@ -1,0 +1,313 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0f1117;
+  --surface:   #1a1f2e;
+  --border:    #2d3748;
+  --text:      #e2e8f0;
+  --muted:     #718096;
+  --accent:    #3b82f6;
+  --accent-hv: #2563eb;
+  --green:     #16a34a;
+  --blue:      #1d4ed8;
+  --radius:    10px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0.9rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brand-icon { font-size: 1.4rem; }
+
+h1 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+}
+
+.deploy-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #2d3748;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  transition: all 0.4s ease;
+}
+
+.deploy-badge.blue  { background: var(--blue);  color: #bfdbfe; border-color: #3b82f6; }
+.deploy-badge.green { background: var(--green); color: #bbf7d0; border-color: #22c55e; }
+
+/* ── Grid Layout ── */
+main {
+  max-width: 1300px;
+  margin: 2rem auto;
+  padding: 0 1.25rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 340px 1fr 380px;
+  grid-template-rows: auto 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+#add-note-card  { grid-column: 1; grid-row: 1; }
+#notes-card     { grid-column: 2; grid-row: 1 / 3; }
+#chat-card      { grid-column: 3; grid-row: 1 / 3; display: flex; flex-direction: column; }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.card h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.count {
+  font-size: 0.75rem;
+  background: var(--border);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+
+/* ── Forms ── */
+form { display: flex; flex-direction: column; gap: 0.65rem; }
+
+input[type="text"],
+textarea {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 0.65rem 0.9rem;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-family: inherit;
+  width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
+
+textarea { resize: vertical; min-height: 90px; }
+
+button[type="submit"] {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  align-self: flex-start;
+}
+
+button[type="submit"]:hover { background: var(--accent-hv); }
+button[type="submit"]:active { transform: scale(0.98); }
+
+/* ── Notes list ── */
+#notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 540px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.note-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  transition: border-color 0.15s;
+}
+
+.note-card:hover { border-color: #4a5568; }
+
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.4rem;
+}
+
+.note-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0 2px;
+  transition: color 0.15s;
+}
+
+.delete-btn:hover { color: #f87171; }
+
+.note-body {
+  font-size: 0.825rem;
+  color: #94a3b8;
+  line-height: 1.55;
+  margin-bottom: 0.4rem;
+  white-space: pre-wrap;
+}
+
+.note-time {
+  font-size: 0.72rem;
+  color: #4b5563;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.875rem;
+  padding: 2.5rem 0;
+}
+
+/* ── Chat ── */
+#chat-card { min-height: 480px; }
+
+#chat-box {
+  flex: 1;
+  min-height: 340px;
+  max-height: 420px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+  padding: 0.6rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.msg {
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  max-width: 88%;
+  word-break: break-word;
+}
+
+.msg .sender {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  opacity: 0.65;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.msg.user {
+  background: var(--blue);
+  color: #dbeafe;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.msg.ai {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  align-self: flex-start;
+}
+
+.msg.thinking {
+  background: var(--surface);
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  align-self: flex-start;
+  font-style: italic;
+}
+
+#chat-form { flex-direction: row; gap: 0.5rem; }
+#chat-input { flex: 1; }
+
+/* ── Scrollbars ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+  #add-note-card { grid-column: 1; grid-row: 1; }
+  #notes-card    { grid-column: 2; grid-row: 1 / 3; }
+  #chat-card     { grid-column: 1 / 3; grid-row: 3; }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  #add-note-card, #notes-card, #chat-card {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}

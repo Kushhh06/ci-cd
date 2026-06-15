@@ -1,0 +1,45 @@
+jenkins:
+  systemMessage: "AI Notes — CI/CD Demo"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "admin123"
+  authorizationStrategy: loggedInUsersCanDoAnything
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - string:
+              scope: GLOBAL
+              id: "gemini-api-key"
+              secret: "${GEMINI_API_KEY}"
+              description: "Gemini AI API Key"
+
+jobs:
+  - script: |
+      pipelineJob('ai-notes-pipeline') {
+        displayName('AI Notes — Blue/Green Deploy')
+        description('Builds, tests, and deploys the AI Notes app with zero-downtime blue-green deployment.')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('file:///repo')
+                }
+                branches('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+          }
+        }
+        triggers {
+          pollSCM {
+            scmpoll_spec('H/1 * * * *')
+          }
+        }
+      }
