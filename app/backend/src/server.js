@@ -129,3 +129,5 @@ app._resetForTest = () => {
   try { fs.unlinkSync(DATA_FILE); } catch {}
 };
 
+module.exports = app;
+

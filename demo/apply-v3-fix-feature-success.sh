@@ -12,7 +12,7 @@ echo "Applying v3: removing syntax error from server.js..."
 # Works on both GNU and BSD sed
 SERVER="$ROOT/app/backend/src/server.js"
 LINES=$(wc -l < "$SERVER")
-KEEP=$((LINES - 4))   # remove the blank line + comment + unclosed object (4 lines)
+KEEP=$((LINES - 3))   # remove blank line + BUG comment + unclosed object (3 lines)
 head -n "$KEEP" "$SERVER" > "${SERVER}.tmp" && mv "${SERVER}.tmp" "$SERVER"
 
 echo ""
