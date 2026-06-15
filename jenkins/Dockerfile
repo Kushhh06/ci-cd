@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y \
     git \
   && rm -rf /var/lib/apt/lists/*
 
-# Allow jenkins user to run docker commands via the mounted socket
-RUN groupadd -f docker && usermod -aG docker jenkins
+# Match the host docker group GID so jenkins can access /var/run/docker.sock
+RUN groupadd -f -g 124 docker && usermod -aG docker jenkins
 
 USER jenkins
 
