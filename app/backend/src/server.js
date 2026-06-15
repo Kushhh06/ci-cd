@@ -130,3 +130,6 @@ app._resetForTest = () => {
 };
 
 module.exports = app;
+
+// BUG: accidental syntax error — unclosed object
+const brokenAnalytics = {
