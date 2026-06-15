@@ -30,8 +30,9 @@ echo "║  Deploying to: $NEW_COLOR"
 echo "╚══════════════════════════════════════════════╝"
 echo ""
 
-# ── Ensure Docker network exists ──────────────────────────
+# ── Ensure Docker network + data volume exist ─────────────
 docker network create "$DOCKER_NETWORK" 2>/dev/null || true
+docker volume create "${APP_NAME}-data" 2>/dev/null || true
 
 # ── Tag built images with color ───────────────────────────
 docker tag "${APP_NAME}-backend:${APP_VERSION}"  "${APP_NAME}-backend:${NEW_COLOR}"
@@ -46,6 +47,7 @@ docker rm -f "${APP_NAME}-frontend-${NEW_COLOR}" 2>/dev/null || true
 docker run -d \
   --name "${APP_NAME}-backend-${NEW_COLOR}" \
   --network "$DOCKER_NETWORK" \
+  -v "${APP_NAME}-data:/data" \
   -e GEMINI_API_KEY="$GEMINI_API_KEY" \
   -e PORT=3000 \
   -e APP_VERSION="$APP_VERSION" \

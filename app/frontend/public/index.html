@@ -4,51 +4,89 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- Header -->
   <header>
     <div class="header-inner">
       <div class="brand">
-        <span class="brand-icon">📝</span>
-        <h1>AI Notes</h1>
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <span class="brand-name">AI Notes</span>
       </div>
-      <div id="deploy-badge" class="deploy-badge">connecting…</div>
+      <div id="deploy-badge" class="badge">
+        <span class="badge-dot"></span>
+        <span id="badge-text">Connecting…</span>
+      </div>
     </div>
   </header>
 
+  <!-- Main Layout -->
   <main>
-    <div class="grid">
+
+    <!-- Left Column -->
+    <aside class="sidebar">
 
       <!-- Add Note -->
-      <section class="card" id="add-note-card">
-        <h2>New Note</h2>
-        <form id="note-form">
-          <input id="note-title" type="text" placeholder="Title…" required />
-          <textarea id="note-content" placeholder="Write your note…" required></textarea>
-          <button type="submit">Add Note</button>
-        </form>
-      </section>
-
-      <!-- Notes List -->
-      <section class="card" id="notes-card">
-        <h2>Your Notes <span id="note-count" class="count"></span></h2>
-        <div id="notes-list">
-          <p class="empty">No notes yet — add one on the left!</p>
+      <div class="panel">
+        <div class="panel-header">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Note
         </div>
-      </section>
+        <form id="note-form" class="note-form">
+          <input id="note-title" type="text" placeholder="Title…" autocomplete="off" required />
+          <textarea id="note-content" rows="4" placeholder="What's on your mind?…" required></textarea>
+          <button type="submit" class="btn btn-primary" id="add-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Note
+          </button>
+        </form>
+      </div>
 
       <!-- AI Chat -->
-      <section class="card" id="chat-card">
-        <h2>🤖 Ask AI about your notes</h2>
-        <div id="chat-box"></div>
-        <form id="chat-form">
-          <input id="chat-input" type="text" placeholder="Ask something…" autocomplete="off" />
-          <button type="submit">Send</button>
-        </form>
-      </section>
+      <div class="panel ai-panel">
+        <div class="panel-header">
+          <span class="ai-dot"></span>
+          AI Assistant
+          <button id="summarise-btn" class="btn-pill" onclick="summariseNotes()">✨ Summarise</button>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+          <div class="chat-msg bot">
+            <div class="msg-bubble">👋 Hi! Ask me anything about your notes, or hit <strong>Summarise</strong> to get an overview.</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Ask about your notes…" autocomplete="off" />
+          <button class="btn btn-primary btn-icon" id="chat-send-btn" onclick="sendChat()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
 
-    </div>
+    </aside>
+
+    <!-- Notes Area -->
+    <section class="notes-area">
+      <div class="notes-header">
+        <h2>Your Notes</h2>
+        <span id="notes-count" class="count-chip">0 notes</span>
+      </div>
+      <div id="notes-grid" class="notes-grid">
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">📭</div>
+          <p class="empty-title">No notes yet</p>
+          <p class="empty-sub">Add your first note using the form on the left</p>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <script src="app.js"></script>

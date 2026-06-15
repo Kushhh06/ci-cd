@@ -1,127 +1,210 @@
-const API = '/api';
+// ── State ─────────────────────────────────────────────────
+let notes = [];
 
-// ── Helpers ──────────────────────────────────────────────
-function esc(str) {
-  const d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
-}
+// ── Boot ──────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadNotes();
+  refreshBadge();
+  setInterval(refreshBadge, 15000);
 
-function formatDate(iso) {
-  return new Date(iso).toLocaleString(undefined, {
-    month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit'
+  document.getElementById('note-form').addEventListener('submit', addNote);
+  document.getElementById('chat-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); sendChat(); }
   });
-}
+});
 
-// ── Deployment badge ─────────────────────────────────────
+// ── Badge ─────────────────────────────────────────────────
 async function refreshBadge() {
+  const badge = document.getElementById('deploy-badge');
+  const text  = document.getElementById('badge-text');
   try {
-    const res = await fetch(`${API}/health`);
-    const d = await res.json();
-    const badge = document.getElementById('deploy-badge');
-    badge.textContent = `v${d.version} · ${d.color.toUpperCase()}`;
-    badge.className = `deploy-badge ${d.color}`;
-  } catch { /* server not ready yet */ }
+    const data = await fetchJSON('/api/health');
+    const color = data.color || 'blue';
+    badge.className = `badge ${color}`;
+    text.textContent = `${color.toUpperCase()} · v${data.version}`;
+  } catch {
+    badge.className = 'badge';
+    text.textContent = 'Offline';
+  }
 }
 
 // ── Notes ─────────────────────────────────────────────────
 async function loadNotes() {
-  const res = await fetch(`${API}/notes`);
-  const notes = await res.json();
+  try {
+    notes = await fetchJSON('/api/notes');
+    renderNotes();
+  } catch (err) {
+    console.error('Failed to load notes', err);
+  }
+}
 
-  const list = document.getElementById('notes-list');
-  const count = document.getElementById('note-count');
-  count.textContent = notes.length;
+function renderNotes() {
+  const grid  = document.getElementById('notes-grid');
+  const chip  = document.getElementById('notes-count');
+  chip.textContent = notes.length === 1 ? '1 note' : `${notes.length} notes`;
 
   if (notes.length === 0) {
-    list.innerHTML = '<p class="empty">No notes yet — add one on the left!</p>';
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <p class="empty-title">No notes yet</p>
+        <p class="empty-sub">Add your first note using the form on the left</p>
+      </div>`;
     return;
   }
 
-  list.innerHTML = notes.map(n => `
-    <div class="note-card">
-      <div class="note-header">
-        <span class="note-title">${esc(n.title)}</span>
-        <button class="delete-btn" onclick="deleteNote(${n.id})" title="Delete">×</button>
+  grid.innerHTML = [...notes].reverse().map(n => `
+    <div class="note-card" id="note-${n.id}">
+      <div class="note-card-top">
+        <div class="note-title">${esc(n.title)}</div>
+        <button class="btn-delete" onclick="deleteNote(${n.id})" title="Delete note">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M9 6V4h6v2"/>
+          </svg>
+        </button>
       </div>
-      <p class="note-body">${esc(n.content)}</p>
-      <span class="note-time">${formatDate(n.createdAt)}</span>
+      <div class="note-body">${esc(n.content)}</div>
+      <div class="note-footer">
+        <span class="note-date">${fmtDate(n.createdAt)}</span>
+        <span class="note-tag">Note</span>
+      </div>
     </div>
   `).join('');
 }
 
 async function addNote(e) {
   e.preventDefault();
-  const title = document.getElementById('note-title').value.trim();
+  const title   = document.getElementById('note-title').value.trim();
   const content = document.getElementById('note-content').value.trim();
+  const btn     = document.getElementById('add-btn');
+  if (!title || !content) return;
 
-  const btn = e.target.querySelector('button');
   btn.textContent = 'Saving…';
   btn.disabled = true;
 
-  await fetch(`${API}/notes`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, content })
-  });
+  try {
+    const note = await fetchJSON('/api/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content })
+    });
+    notes.push(note);
+    renderNotes();
+    e.target.reset();
+  } catch {
+    alert('Failed to save note. Please try again.');
+  }
 
-  e.target.reset();
-  btn.textContent = 'Add Note';
+  btn.innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+    Add Note`;
   btn.disabled = false;
-  await loadNotes();
 }
 
 async function deleteNote(id) {
-  await fetch(`${API}/notes/${id}`, { method: 'DELETE' });
-  await loadNotes();
-}
-
-// ── AI Chat ───────────────────────────────────────────────
-function appendMsg(sender, text, type) {
-  const box = document.getElementById('chat-box');
-  const el = document.createElement('div');
-  el.className = `msg ${type}`;
-  el.innerHTML = `<span class="sender">${sender}</span>${esc(text)}`;
-  box.appendChild(el);
-  box.scrollTop = box.scrollHeight;
-  return el;
-}
-
-async function sendChat(e) {
-  e.preventDefault();
-  const input = document.getElementById('chat-input');
-  const message = input.value.trim();
-  if (!message) return;
-
-  input.value = '';
-  appendMsg('You', message, 'user');
-
-  const thinking = appendMsg('AI', 'Thinking…', 'thinking');
-
+  const card = document.getElementById(`note-${id}`);
+  if (card) { card.style.opacity = '.4'; card.style.pointerEvents = 'none'; }
   try {
-    const notesRes = await fetch(`${API}/notes`);
-    const notes = await notesRes.json();
-    const context = notes.map(n => `${n.title}: ${n.content}`).join('\n');
-
-    const res = await fetch(`${API}/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, context })
-    });
-    const d = await res.json();
-    thinking.remove();
-    appendMsg('AI', d.response || d.error, 'ai');
-  } catch (err) {
-    thinking.remove();
-    appendMsg('AI', 'Error reaching the server. Please try again.', 'ai');
+    await fetch(`/api/notes/${id}`, { method: 'DELETE' });
+    notes = notes.filter(n => n.id !== id);
+    renderNotes();
+  } catch {
+    if (card) { card.style.opacity = '1'; card.style.pointerEvents = ''; }
+    alert('Failed to delete note.');
   }
 }
 
-// ── Bootstrap ─────────────────────────────────────────────
-document.getElementById('note-form').addEventListener('submit', addNote);
-document.getElementById('chat-form').addEventListener('submit', sendChat);
+// ── AI Chat ───────────────────────────────────────────────
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg   = input.value.trim();
+  if (!msg) return;
 
-refreshBadge();
-loadNotes();
-setInterval(refreshBadge, 15000);
+  input.value = '';
+  addBubble('user', msg);
+  const typing = addTyping();
+
+  try {
+    const context = notes.map(n => `[${n.title}]: ${n.content}`).join('\n');
+    const data = await fetchJSON('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, context })
+    });
+    typing.remove();
+    addBubble('bot', data.response || data.error || 'No response.');
+  } catch {
+    typing.remove();
+    addBubble('bot', '⚠️ Could not reach AI. Please try again.');
+  }
+}
+
+async function summariseNotes() {
+  if (notes.length === 0) {
+    addBubble('bot', '📭 You have no notes to summarise yet!');
+    return;
+  }
+  addBubble('user', '✨ Summarise my notes');
+  const typing = addTyping();
+
+  try {
+    const data = await fetchJSON('/api/summarise', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notes })
+    });
+    typing.remove();
+    addBubble('bot', data.summary || data.error || 'Could not summarise.');
+  } catch {
+    typing.remove();
+    addBubble('bot', '⚠️ Could not summarise right now.');
+  }
+}
+
+// ── Chat helpers ──────────────────────────────────────────
+function addBubble(role, text) {
+  const container = document.getElementById('chat-messages');
+  const wrap = document.createElement('div');
+  wrap.className = `chat-msg ${role}`;
+  wrap.innerHTML = `<div class="msg-bubble">${esc(text)}</div>`;
+  container.appendChild(wrap);
+  container.scrollTop = container.scrollHeight;
+  return wrap;
+}
+
+function addTyping() {
+  const container = document.getElementById('chat-messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg bot';
+  wrap.innerHTML = `<div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  container.appendChild(wrap);
+  container.scrollTop = container.scrollHeight;
+  return wrap;
+}
+
+// ── Utilities ─────────────────────────────────────────────
+async function fetchJSON(url, opts) {
+  const res = await fetch(url, opts);
+  if (!res.ok && res.status !== 404) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function fmtDate(iso) {
+  return new Date(iso).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
