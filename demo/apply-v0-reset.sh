@@ -1,38 +1,43 @@
 #!/usr/bin/env bash
-# Demo reset — restores the original blue theme.
+# Demo reset — restores the original blue theme and removes animations.
 # Run this any time to get back to the clean starting state before v1.
-# Pipeline: Build ✅  Test ✅  Deploy ✅  (badge switches colour)
+# Pipeline: Build ✅  Test ✅  Deploy ✅
 set -e
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CSS="$ROOT/app/frontend/public/style.css"
-HTML="$ROOT/app/frontend/public/index.html"
+PUBLIC="$ROOT/app/frontend/public"
 
 echo "Resetting to v0: restoring original blue theme..."
 
-# Restore accent colours
-sed -i 's/--accent:       #8b5cf6;/--accent:       #388bfd;/' "$CSS"
-sed -i 's/--accent-hover: #a78bfa;/--accent-hover: #58a6ff;/' "$CSS"
-sed -i 's/--accent-glow:  rgba(139, 92, 246, 0.15);/--accent-glow:  rgba(56, 139, 253, 0.15);/' "$CSS"
-sed -i 's/--blue-dim:     rgba(139,92,246,.12);/--blue-dim:     rgba(56,139,253,.12);/' "$CSS"
-sed -i 's/--blue-border:  rgba(139,92,246,.3);/--blue-border:  rgba(56,139,253,.3);/' "$CSS"
-sed -i 's/background: linear-gradient(135deg, #6d28d9, #8b5cf6);/background: linear-gradient(135deg, #1f6feb, #388bfd);/' "$CSS"
-sed -i 's/box-shadow: 0 0 12px rgba(139,92,246,.35);/box-shadow: 0 0 12px rgba(56,139,253,.35);/' "$CSS"
+# Restore original CSS from stable reference
+cp "$ROOT/demo/themes/blue.css" "$PUBLIC/style.css"
 
-# Remove v2 label from brand name
-sed -i 's|<span class="brand-name">AI Notes <span style="font-size:.7em;font-weight:400;opacity:.7">v2</span></span>|<span class="brand-name">AI Notes</span>|' "$HTML"
+# Remove animation script
+rm -f "$PUBLIC/animate.js"
 
-# Also clean up any v2 syntax error marker if present
+# Restore brand name (remove version tag)
+sed -i \
+  's|<span class="brand-name">AI Notes <span class="version-tag">v2</span></span>|<span class="brand-name">AI Notes</span>|' \
+  "$PUBLIC/index.html"
+
+# Remove animate.js script tag
+sed -i '/animate\.js/d' "$PUBLIC/index.html"
+
+# Clean up v2 syntax error marker if present
 SERVER="$ROOT/app/backend/src/server.js"
 if grep -q '// __DEMO_BREAK__' "$SERVER"; then
   sed -i '/\/\/ __DEMO_BREAK__/,$d' "$SERVER"
+  git add "$SERVER"
   echo "  Also removed v2 syntax error marker from server.js"
 fi
 
 echo ""
 echo "✅ Reset applied. Committing..."
 cd "$ROOT"
-git add app/frontend/public/style.css app/frontend/public/index.html app/backend/src/server.js
+git add app/frontend/public/style.css \
+        app/frontend/public/index.html
+# animate.js removed — stage the deletion
+git add -u app/frontend/public/animate.js 2>/dev/null || true
 git commit -m "chore: reset demo to v0 — original blue theme"
 echo ""
 echo "Jenkins will detect the commit within 60s and run:"
