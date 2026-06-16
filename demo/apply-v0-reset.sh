@@ -23,8 +23,10 @@ sed -i \
 # Remove animate.js script tag
 sed -i '/animate\.js/d' "$PUBLIC/index.html"
 
-# Reset CSS cache-bust version
-sed -i 's|style\.css?v=[0-9]*|style.css|g' "$PUBLIC/index.html"
+# Cache-bust: change ?neon → ?blue (forces browser to fetch original blue CSS)
+sed -i 's|style\.css?[a-z0-9=]*|style.css?blue|g' "$PUBLIC/index.html"
+# Handle case where no query string exists yet
+sed -i 's|href="style\.css"|href="style.css?blue"|g' "$PUBLIC/index.html"
 
 # Clean up v2 syntax error marker if present
 SERVER="$ROOT/app/backend/src/server.js"
