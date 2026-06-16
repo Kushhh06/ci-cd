@@ -15,6 +15,9 @@ cp "$ROOT/demo/themes/blue.css" "$PUBLIC/style.css"
 # Remove animation script
 rm -f "$PUBLIC/animate.js"
 
+# Restore original app.js (removes search bar, tags, help modal)
+cp "$ROOT/demo/themes/v0-app.js" "$PUBLIC/app.js"
+
 # Restore brand name (remove version tag)
 sed -i \
   's|<span class="brand-name">AI Notes <span class="version-tag">v2</span></span>|<span class="brand-name">AI Notes</span>|' \
@@ -40,7 +43,8 @@ echo ""
 echo "✅ Reset applied. Committing..."
 cd "$ROOT"
 git add app/frontend/public/style.css \
-        app/frontend/public/index.html
+        app/frontend/public/index.html \
+        app/frontend/public/app.js
 # animate.js removed — stage the deletion
 git add -u app/frontend/public/animate.js 2>/dev/null || true
 git commit -m "chore: reset demo to v0 — original blue theme"

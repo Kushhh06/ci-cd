@@ -85,7 +85,7 @@ bash demo/apply-v2-broken-fail.sh
 
 Jenkins: Build ✅ Test ❌ Deploy SKIPPED
 
-The live app at http://localhost keeps running — zero downtime proven.
+A developer commits Smart Search + auto-tags (futuristic UI) alongside a new `/api/search` backend endpoint — but leaves it with a syntax error. CI catches it. The live app at http://localhost keeps running on the v1 Aurora Glass UI — zero downtime proven.
 
 ---
 
@@ -96,6 +96,8 @@ bash demo/apply-v3-fix-feature-success.sh
 ```
 
 Jenkins: Build ✅ Test ✅ Deploy ✅ — badge switches colour slot again.
+
+Fixes the syntax error and ships the complete feature set: Smart Search bar, auto-generated tags on every note card, a Help & Support slide-in panel, and keyboard shortcuts (Ctrl+K to search, Esc to close).
 
 ---
 
