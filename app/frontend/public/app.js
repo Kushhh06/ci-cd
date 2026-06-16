@@ -5,9 +5,7 @@ let searchQuery = '';
 // ── Boot ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   injectV2Styles();
-  injectV3Styles();
   injectSearchBar();
-  injectHelpModal();
   loadNotes();
   refreshBadge();
   setInterval(refreshBadge, 15000);
@@ -15,16 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('note-form').addEventListener('submit', addNote);
   document.getElementById('chat-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); sendChat(); }
-  });
-
-  document.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-      e.preventDefault();
-      document.getElementById('search-bar')?.focus();
-    }
-    if (e.key === 'Escape') {
-      document.getElementById('help-modal')?.classList.remove('open');
-    }
   });
 });
 
@@ -100,7 +88,7 @@ function injectSearchBar() {
     <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
     </svg>
-    <input id="search-bar" type="text" placeholder="Search notes… (Ctrl+K)" autocomplete="off" />
+    <input id="search-bar" type="text" placeholder="Search notes…" autocomplete="off" />
   `;
   grid.parentNode.insertBefore(wrap, grid);
   document.getElementById('search-bar').addEventListener('input', e => filterNotes(e.target.value));
@@ -109,207 +97,6 @@ function injectSearchBar() {
 function filterNotes(q) {
   searchQuery = q.toLowerCase().trim();
   renderNotes();
-}
-
-// ── V3 Injected UI ────────────────────────────────────────
-function injectV3Styles() {
-  const s = document.createElement('style');
-  s.textContent = `
-    .help-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(139,92,246,0.08);
-      border: 1px solid rgba(139,92,246,0.25);
-      border-radius: 9px;
-      color: var(--accent-hover, #c084fc);
-      font: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 7px 16px;
-      cursor: pointer;
-      transition: background .2s, border-color .2s, box-shadow .2s;
-      white-space: nowrap;
-    }
-    .help-btn:hover {
-      background: rgba(139,92,246,0.16);
-      border-color: rgba(139,92,246,0.5);
-      box-shadow: 0 0 14px rgba(139,92,246,0.22);
-    }
-    #help-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      justify-content: flex-end;
-    }
-    #help-modal.open { display: flex; }
-    .help-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(4px);
-    }
-    .help-panel {
-      position: relative;
-      width: 340px;
-      background: rgba(10,3,24,0.96);
-      backdrop-filter: blur(32px);
-      -webkit-backdrop-filter: blur(32px);
-      border-left: 1px solid rgba(139,92,246,0.2);
-      display: flex;
-      flex-direction: column;
-      box-shadow: -8px 0 48px rgba(0,0,0,0.55);
-      animation: slideInRight .28s cubic-bezier(0.16,1,0.3,1);
-    }
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to   { transform: translateX(0);    opacity: 1; }
-    }
-    .help-hdr {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text, #f0ebff);
-    }
-    .help-close {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 7px;
-      color: var(--text-muted, #9d8cc4);
-      cursor: pointer;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      transition: background .2s, color .2s;
-      flex-shrink: 0;
-    }
-    .help-close:hover { background: rgba(255,255,255,0.12); color: var(--text,#f0ebff); }
-    .help-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 22px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 26px;
-    }
-    .help-section h4 {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent, #a855f7);
-      margin: 0 0 12px;
-    }
-    .shortcut-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 7px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 13px;
-      color: var(--text-muted, #9d8cc4);
-    }
-    .shortcut-row:last-child { border-bottom: none; }
-    kbd {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-bottom-width: 2px;
-      border-radius: 5px;
-      padding: 2px 8px;
-      font-family: inherit;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text, #f0ebff);
-    }
-    .help-section ul {
-      margin: 0;
-      padding-left: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-    }
-    .help-section li, .help-section p {
-      font-size: 13px;
-      color: var(--text-muted, #9d8cc4);
-      line-height: 1.6;
-      margin: 0;
-    }
-    .help-about {
-      background: rgba(139,92,246,0.06);
-      border: 1px solid rgba(139,92,246,0.15);
-      border-radius: 10px;
-      padding: 14px 16px;
-    }
-    .help-about p { font-size: 12px; line-height: 1.7; }
-  `;
-  document.head.appendChild(s);
-}
-
-function injectHelpModal() {
-  if (document.getElementById('help-modal')) return;
-
-  const btn = document.createElement('button');
-  btn.className = 'help-btn';
-  btn.id = 'help-btn';
-  btn.innerHTML = `
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/>
-      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-      <line x1="12" y1="17" x2="12.01" y2="17"/>
-    </svg>
-    Help
-  `;
-  btn.onclick = toggleHelp;
-  const headerInner = document.querySelector('.header-inner');
-  if (headerInner) headerInner.appendChild(btn);
-
-  const modal = document.createElement('div');
-  modal.id = 'help-modal';
-  modal.innerHTML = `
-    <div class="help-backdrop" onclick="toggleHelp()"></div>
-    <div class="help-panel">
-      <div class="help-hdr">
-        <span>Help &amp; Support</span>
-        <button class="help-close" onclick="toggleHelp()">✕</button>
-      </div>
-      <div class="help-body">
-        <div class="help-section">
-          <h4>Keyboard Shortcuts</h4>
-          <div class="shortcut-row"><span>Focus search</span><kbd>Ctrl K</kbd></div>
-          <div class="shortcut-row"><span>Close this panel</span><kbd>Esc</kbd></div>
-          <div class="shortcut-row"><span>Send chat message</span><kbd>Enter</kbd></div>
-        </div>
-        <div class="help-section">
-          <h4>Smart Features</h4>
-          <ul>
-            <li><strong style="color:var(--text,#f0ebff)">Smart Tags</strong> — auto-generated from your note content, no setup needed</li>
-            <li><strong style="color:var(--text,#f0ebff)">Search</strong> — filters by title and content in real time</li>
-            <li><strong style="color:var(--text,#f0ebff)">AI Chat</strong> — ask anything about your notes using Gemini</li>
-            <li><strong style="color:var(--text,#f0ebff)">Summarise</strong> — get an AI overview of all your notes at once</li>
-          </ul>
-        </div>
-        <div class="help-section">
-          <h4>About This App</h4>
-          <div class="help-about">
-            <p>AI Notes is a CI/CD blue-green deployment demo built with Jenkins + Docker + nginx. Every commit triggers an automated pipeline — zero-downtime deployments proven live.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-}
-
-function toggleHelp() {
-  document.getElementById('help-modal')?.classList.toggle('open');
 }
 
 // ── Badge ─────────────────────────────────────────────────
