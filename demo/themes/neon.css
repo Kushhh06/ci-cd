@@ -4,11 +4,11 @@
 /* ── Design tokens ───────────────────────────────────────── */
 :root {
   --bg:           #000000;
-  --bg-2:         #010801;
-  --surface:      #060e06;
-  --surface-2:    #0a170a;
-  --border:       rgba(0, 255, 136, 0.07);
-  --border-2:     rgba(0, 255, 136, 0.18);
+  --bg-2:         #030d03;
+  --surface:      #0d1f0d;
+  --surface-2:    #142814;
+  --border:       rgba(0, 255, 136, 0.18);
+  --border-2:     rgba(0, 255, 136, 0.35);
   --text:         #b8ffd0;
   --text-muted:   #4a9e62;
   --text-subtle:  #1e4a2a;
