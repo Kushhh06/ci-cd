@@ -8,8 +8,8 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 echo "Applying v1: change accent colour blue → purple..."
 
 # Swap CSS design tokens
-sed -i 's/--accent:           #388bfd;/--accent:           #8b5cf6;/' "$ROOT/app/frontend/public/style.css"
-sed -i 's/--accent-hover:     #58a6ff;/--accent-hover:     #a78bfa;/' "$ROOT/app/frontend/public/style.css"
+sed -i 's/--accent:       #388bfd;/--accent:       #8b5cf6;/' "$ROOT/app/frontend/public/style.css"
+sed -i 's/--accent-hover: #58a6ff;/--accent-hover: #a78bfa;/' "$ROOT/app/frontend/public/style.css"
 sed -i 's/--accent-glow:  rgba(56, 139, 253, 0.15);/--accent-glow:  rgba(139, 92, 246, 0.15);/' "$ROOT/app/frontend/public/style.css"
 sed -i 's/--blue-dim:     rgba(56,139,253,.12);/--blue-dim:     rgba(139,92,246,.12);/' "$ROOT/app/frontend/public/style.css"
 sed -i 's/--blue-border:  rgba(56,139,253,.3);/--blue-border:  rgba(139,92,246,.3);/' "$ROOT/app/frontend/public/style.css"
