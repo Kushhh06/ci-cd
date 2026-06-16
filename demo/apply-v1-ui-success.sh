@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Demo v1 — Full neon green UI with spring animations.
+# Demo v1 — Aurora Glass UI with spring animations.
 # Pipeline: Build ✅  Test ✅  Deploy ✅  (badge switches colour slot)
 set -e
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PUBLIC="$ROOT/app/frontend/public"
 
-echo "Applying v1: neon green theme + spring animations..."
+echo "Applying v1: Aurora Glass theme + spring animations..."
 
 # Swap CSS theme
 cp "$ROOT/demo/themes/neon.css" "$PUBLIC/style.css"
@@ -37,9 +37,9 @@ cd "$ROOT"
 git add app/frontend/public/style.css \
         app/frontend/public/animate.js \
         app/frontend/public/index.html
-git commit -m "feat: v2 UI — neon green theme with spring animations"
+git commit -m "feat: v1 UI — Aurora Glass theme with spring animations"
 echo ""
 echo "Jenkins will detect the commit within 60s and run:"
 echo "  Build ✅ → Test ✅ → Deploy ✅"
 echo "Watch the badge at http://localhost switch colour."
-echo "The app will have a full black + neon green look with animated cards."
+echo "The app will have an Aurora Glass look — dark purple, glassmorphism panels, gradient text."

@@ -65,7 +65,7 @@ When the pipeline goes green the app is live at http://localhost.
 
 Always run scripts from the project root (`ci-cd/`), not from inside the `demo/` folder.
 
-### Demo v1 — Neon green UI (SUCCESS)
+### Demo v1 — Aurora Glass UI (SUCCESS)
 
 ```bash
 bash demo/apply-v1-ui-success.sh
@@ -73,7 +73,7 @@ bash demo/apply-v1-ui-success.sh
 
 Jenkins picks up the commit within 60 s → Build ✅ Test ✅ Deploy ✅
 
-The whole UI switches to a black + neon green theme with animated cards. The badge in the header switches colour slot.
+The whole UI switches to an Aurora Glass theme — deep purple background with glassmorphism panels, gradient text, and spring-animated cards. The badge in the header switches colour slot.
 
 ---
 
