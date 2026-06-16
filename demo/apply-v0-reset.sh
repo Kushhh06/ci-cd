@@ -23,6 +23,9 @@ sed -i \
 # Remove animate.js script tag
 sed -i '/animate\.js/d' "$PUBLIC/index.html"
 
+# Reset CSS cache-bust version
+sed -i 's|style\.css?v=[0-9]*|style.css|g' "$PUBLIC/index.html"
+
 # Clean up v2 syntax error marker if present
 SERVER="$ROOT/app/backend/src/server.js"
 if grep -q '// __DEMO_BREAK__' "$SERVER"; then

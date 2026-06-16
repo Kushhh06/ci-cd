@@ -19,10 +19,10 @@ sed -i \
   's|<span class="brand-name">AI Notes</span>|<span class="brand-name">AI Notes <span class="version-tag">v2</span></span>|' \
   "$PUBLIC/index.html"
 
-# Load animate.js before </body>
-sed -i \
-  's|</body>|  <script src="animate.js"></script>\n</body>|' \
-  "$PUBLIC/index.html"
+# Load animate.js before </body> (only if not already present)
+if ! grep -q 'animate.js' "$PUBLIC/index.html"; then
+  sed -i 's|</body>|  <script src="animate.js"></script>\n</body>|' "$PUBLIC/index.html"
+fi
 
 echo ""
 echo "✅ v1 applied. Committing..."
