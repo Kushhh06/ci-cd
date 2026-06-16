@@ -20,6 +20,9 @@ echo "Applying v2: Smart Search + auto-tags UI + broken /api/search endpoint..."
 # Deploy v2 app.js (smart search + auto-tags, no help modal yet)
 cp "$ROOT/demo/themes/v2-app.js" "$PUBLIC/app.js"
 
+# Cache-bust app.js so browser fetches the new version
+sed -i 's|src="app\.js[^"]*"|src="app.js?v2"|g' "$PUBLIC/index.html"
+
 # Append broken search endpoint to backend (unclosed arrow function = SyntaxError)
 cat >> "$SERVER" << 'EOF'
 
@@ -35,6 +38,7 @@ echo ""
 echo "✅ v2 patch applied. Committing..."
 cd "$ROOT"
 git add app/frontend/public/app.js \
+        app/frontend/public/index.html \
         app/backend/src/server.js
 git commit -m "feat: smart search + auto-tags UI — add /api/search endpoint (WIP)"
 echo ""

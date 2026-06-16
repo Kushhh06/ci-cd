@@ -21,11 +21,15 @@ sed -i '/\/\/ __DEMO_BREAK__/,$d' "$SERVER"
 # Deploy v3 app.js (search + auto-tags + help modal + keyboard shortcuts)
 cp "$ROOT/demo/themes/v3-app.js" "$PUBLIC/app.js"
 
+# Cache-bust app.js so browser fetches the new version
+sed -i 's|src="app\.js[^"]*"|src="app.js?v3"|g' "$PUBLIC/index.html"
+
 echo ""
 echo "✅ v3 patch applied. Committing..."
 cd "$ROOT"
 git add app/backend/src/server.js \
-        app/frontend/public/app.js
+        app/frontend/public/app.js \
+        app/frontend/public/index.html
 git commit -m "fix: resolve search endpoint syntax error + add Help & Support panel"
 echo ""
 echo "Jenkins will detect the commit within 60s and run:"

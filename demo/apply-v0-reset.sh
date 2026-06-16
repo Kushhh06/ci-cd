@@ -31,6 +31,9 @@ sed -i 's|style\.css?[a-z0-9=]*|style.css?blue|g' "$PUBLIC/index.html"
 # Handle case where no query string exists yet
 sed -i 's|href="style\.css"|href="style.css?blue"|g' "$PUBLIC/index.html"
 
+# Cache-bust app.js back to plain (forces browser to fetch original app.js)
+sed -i 's|src="app\.js[^"]*"|src="app.js"|g' "$PUBLIC/index.html"
+
 # Clean up v2 syntax error marker if present
 SERVER="$ROOT/app/backend/src/server.js"
 if grep -q '// __DEMO_BREAK__' "$SERVER"; then
