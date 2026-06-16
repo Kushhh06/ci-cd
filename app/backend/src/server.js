@@ -132,3 +132,6 @@ app._resetForTest = () => {
 module.exports = app;
 
 
+
+// __DEMO_BREAK__ — marker used by v3 to cleanly remove this block
+const brokenAnalytics = {
