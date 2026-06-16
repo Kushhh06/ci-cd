@@ -137,9 +137,3 @@ module.exports = app;
 
 
 
-// __DEMO_BREAK__ — marker used by v3 to cleanly remove this block
-app.get('/api/search', async (req, res) => {
-  const { q = '' } = req.query;
-  const results = loadNotes().filter(n =>
-    n.title.toLowerCase().includes(q) ||
-    n.content.toLowerCase().includes(q)
